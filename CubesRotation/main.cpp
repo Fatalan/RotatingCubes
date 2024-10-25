@@ -6,90 +6,72 @@
 #include <set>
 #include <unordered_set>
 
-template<> struct std::equal_to<glm::vec3> {
-    using argument_type = glm::vec3;
-    using result_type = bool;
-    constexpr bool operator()(const glm::vec3& lhs, const glm::vec3& rhs) const {
-        return (lhs.x == rhs.x) && (lhs.y == rhs.y) && (lhs.z == rhs.z);
-    }
-};
-
-bool operator==(const glm::vec3& lhs, const glm::vec3& rhs) {
-    return (lhs.x == rhs.x) && (lhs.y == rhs.y) && (lhs.z == rhs.z);
-}
-
 struct cube {
-    std::vector<glm::vec3>* points = new std::vector<glm::vec3>();
-};
-
-struct Hash {
-    size_t operator()(const glm::vec3& vec) const {
-        return std::hash<float>{}(vec.x) + std::hash<float>{}(vec.y) + std::hash<float>{}(vec.z);
-    }
+    glm::vec3 b1;
+    glm::vec3 b2;
+    glm::vec3 b3;
+    glm::vec3 b4;
+    glm::vec3 t1;
+    glm::vec3 t2;
+    glm::vec3 t3;
+    glm::vec3 t4;
 };
 
 std::vector<cube>* cubes = new std::vector<cube>();
 float step = 0.01;
 
+void DrawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
+    glBegin(GL_POLYGON);
+    glColor3f(1, 0, 0); glVertex3f(p1.x, p1.y, p1.z);
+    glColor3f(0, 1, 0); glVertex3f(p2.x, p2.y, p2.z);
+    glColor3f(0, 0, 1); glVertex3f(p3.x, p3.y, p3.z);
+    glEnd();
+}
+
 void DrawCube(cube cub) {
-    int count = 0;
-    std::vector<glm::vec3> points = *cub.points;
-    int n = points.size();
-    //std::unordered_set<std::unordered_set<glm::vec3, Hash>>* drawn = new std::unordered_set<std::unordered_set<glm::vec3, Hash>>();
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            for (int k = 0; k < n; k++) {
-                std::unordered_set<float>* xset = new std::unordered_set<float>();
-                std::unordered_set<float>* yset = new std::unordered_set<float>();
-                std::unordered_set<float>* zset = new std::unordered_set<float>();
-                xset->insert(xset->begin(), points[i].x);
-                xset->insert(xset->begin(), points[j].x);
-                xset->insert(xset->begin(), points[k].x);
-                yset->insert(yset->begin(), points[i].y);
-                yset->insert(yset->begin(), points[j].y);
-                yset->insert(yset->begin(), points[k].y);
-                zset->insert(zset->begin(), points[i].z);
-                zset->insert(zset->begin(), points[j].z);
-                zset->insert(zset->begin(), points[k].z);
-                //std::unordered_set<glm::vec3, Hash>* vectorsSet = new std::unordered_set<glm::vec3, Hash>();
-                if (xset->size() + yset->size() + zset->size() == 5 /*&& drawn->find(*vectorsSet) == drawn->end()*/)
-                {
-                    glBegin(GL_POLYGON);
-                    glColor3f(1, 0, 0); glVertex3f(points[i].x, points[i].y, points[i].z);
-                    glColor3f(0, 1, 0); glVertex3f(points[j].x, points[j].y, points[j].z);
-                    glColor3f(0, 0, 1); glVertex3f(points[k].x, points[k].y, points[k].z);
-                    glEnd();
-                    //vectorsSet->insert(vectorsSet->begin(), points[i]);
-                    //vectorsSet->insert(vectorsSet->begin(), points[j]);
-                    //vectorsSet->insert(vectorsSet->begin(), points[k]);
-                    //drawn->insert(drawn->begin(), *vectorsSet);
-                    count++;
-                }
-                delete xset;
-                delete yset;
-                delete zset;
-            }
-        }
-    }
-    //delete drawn;
-    printf("%i\n", count);
+    //Нижняя грань:
+    DrawTriangle(cub.b1, cub.b2, cub.b3);
+    DrawTriangle(cub.b2, cub.b3, cub.b4);
+    //Верхняя грань:
+    DrawTriangle(cub.t1, cub.t2, cub.t3);
+    DrawTriangle(cub.t2, cub.t3, cub.t4);
+    //Боковая грань(дальняя правая):
+    DrawTriangle(cub.b1, cub.b2, cub.t1);
+    DrawTriangle(cub.b2, cub.t1, cub.t2);
+    //Боковая грань(ближняя правая):
+    DrawTriangle(cub.b2, cub.b4, cub.t2);
+    DrawTriangle(cub.b4, cub.t2, cub.t4);
+    //Боковая грань(дальняя левая):
+    DrawTriangle(cub.b1, cub.b3, cub.t1);
+    DrawTriangle(cub.b3, cub.t1, cub.t3);
+    //Боковая грань(ближняя левая):
+    DrawTriangle(cub.b3, cub.b4, cub.t3);
+    DrawTriangle(cub.b4, cub.t3, cub.t4);
 }
 
 void MoveCube(cube& cub) {
-    std::vector<glm::vec3> points = *cub.points;
-    std::vector<glm::vec3>* newPoints = new std::vector<glm::vec3>();
-    if (points[0].x > 2) {
+    if (cub.b1.x > 1) {
         step = -0.1;
     }
-    else if(points[0].x < -2) {
+    else if(cub.b1.x < -1) {
         step = 0.1;
     }
-    for (unsigned int i = 0; i < points.size(); i++) {
-        newPoints->insert(newPoints->begin(), glm::vec3(points[i].x + step, points[i].y + step, points[i].z));
-    }
-    std::vector<glm::vec3>* temp = cub.points;
-    cub.points = newPoints;
-    delete temp;
+    cub.b1.x += step;
+    cub.b1.y += step;
+    cub.b2.x += step;
+    cub.b2.y += step;
+    cub.b3.x += step;
+    cub.b3.y += step;
+    cub.b4.x += step;
+    cub.b4.y += step;
+    cub.t1.x += step;
+    cub.t1.y += step;
+    cub.t2.x += step;
+    cub.t2.y += step;
+    cub.t3.x += step;
+    cub.t3.y += step;
+    cub.t4.x += step;
+    cub.t4.y += step;
 }
 
 void display() {
@@ -112,17 +94,16 @@ void Loop(int i)
 }
 
 int main(int argc, char** argv) {
-    cube* cub = new cube();
-    cub->points = new std::vector<glm::vec3>();
-    cub->points->insert(cub->points->begin(), glm::vec3(0, 0, 0));
-    cub->points->insert(cub->points->begin(), glm::vec3(0, 1, 0));
-    cub->points->insert(cub->points->begin(), glm::vec3(1, 0, 0));
-    cub->points->insert(cub->points->begin(), glm::vec3(1, 1, 0));
-    cub->points->insert(cub->points->begin(), glm::vec3(0, 0, 1));
-    cub->points->insert(cub->points->begin(), glm::vec3(0, 1, 1));
-    cub->points->insert(cub->points->begin(), glm::vec3(1, 0, 1));
-    cub->points->insert(cub->points->begin(), glm::vec3(1, 1, 1));
-    cubes->insert(cubes->begin(), *cub);
+    cube cub = *new cube();
+    cub.b1 = glm::vec3(0, 0, 0);
+    cub.b2 = glm::vec3(0, 0, 1);
+    cub.b3 = glm::vec3(1, 0, 0);
+    cub.b4 = glm::vec3(1, 0, 1);
+    cub.t1 = glm::vec3(0, 1, 0);
+    cub.t2 = glm::vec3(0, 1, 1);
+    cub.t3 = glm::vec3(1, 1, 0);
+    cub.t4 = glm::vec3(1, 1, 1);
+    cubes->insert(cubes->begin(), cub);
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowPosition(0, 0);
