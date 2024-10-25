@@ -21,7 +21,16 @@ struct cube {
     glm::vec3 t4;
 };
 
+struct pyramid {
+    glm::vec3 t;
+    glm::vec3 b1;
+    glm::vec3 b2;
+    glm::vec3 b3;
+    glm::vec3 b4;
+};
+
 std::vector<cube>* cubes = new std::vector<cube>();
+std::vector<pyramid>* pyramids = new std::vector<pyramid>();
 float step = 0.01;
 float BackGroundR = 0;
 float BackGroundB = 0;
@@ -32,9 +41,12 @@ float EyeZ = 5;
 
 void DrawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
     glBegin(GL_POLYGON);
-    glColor3f(0, 0.6, 0.5); glVertex3f(p1.x, p1.y, p1.z);
-    glColor3f(0, 0.4, 0.6); glVertex3f(p2.x, p2.y, p2.z);
-    glColor3f(0, 0.5, 0.5); glVertex3f(p3.x, p3.y, p3.z);
+    //glColor3f(0, 0.6, 0.5); glVertex3f(p1.x, p1.y, p1.z);
+    //glColor3f(0, 0.4, 0.6); glVertex3f(p2.x, p2.y, p2.z);
+    //glColor3f(0, 0.5, 0.5); glVertex3f(p3.x, p3.y, p3.z);
+    glColor3f(1, 0, 0); glVertex3f(p1.x, p1.y, p1.z);
+    glColor3f(0, 1, 0); glVertex3f(p2.x, p2.y, p2.z);
+    glColor3f(0, 0, 1); glVertex3f(p3.x, p3.y, p3.z);
     glEnd();
 }
 
@@ -57,6 +69,27 @@ void DrawCube(cube cub) {
     //Боковая грань(ближняя левая):
     DrawTriangle(cub.b4, cub.b3, cub.t3);
     DrawTriangle(cub.b4, cub.t4, cub.t3);
+}
+
+void DrawPyramid(pyramid pyr) {
+    DrawTriangle(pyr.t, pyr.b2, pyr.b1);
+    DrawTriangle(pyr.t, pyr.b3, pyr.b1);
+    DrawTriangle(pyr.t, pyr.b4, pyr.b3);
+    DrawTriangle(pyr.t, pyr.b4, pyr.b2);
+    DrawTriangle(pyr.b1, pyr.b3, pyr.b4);
+    DrawTriangle(pyr.b1, pyr.b2, pyr.b4);
+}
+
+void RotatePyramid(pyramid& pyr) {
+    glm::mat4 rotationMatrix(1);
+    glm::vec3 centerOfThePyramid = (pyr.b1 + glm::vec3((pyr.b4 - pyr.b1).x / 2, (pyr.b4 - pyr.b1).y / 2, (pyr.b4 - pyr.b1).z / 2));
+    centerOfThePyramid = (centerOfThePyramid + glm::vec3((pyr.t - centerOfThePyramid).x / 2, (pyr.t - centerOfThePyramid).y / 2, (pyr.t - centerOfThePyramid).z / 2));
+    rotationMatrix = glm::rotate(rotationMatrix, 0.02f, centerOfThePyramid);
+    pyr.b1 = glm::vec3(rotationMatrix * glm::vec4(pyr.b1, 1.0));
+    pyr.b2 = glm::vec3(rotationMatrix * glm::vec4(pyr.b2, 1.0));
+    pyr.b3 = glm::vec3(rotationMatrix * glm::vec4(pyr.b3, 1.0));
+    pyr.b4 = glm::vec3(rotationMatrix * glm::vec4(pyr.b4, 1.0));
+    pyr.t = glm::vec3(rotationMatrix * glm::vec4(pyr.t, 1.0));
 }
 
 void RotateCube(cube& cub, float angle) {
@@ -139,6 +172,10 @@ void display() {
         //MoveCube((*cubes)[i]);
         RotateCube((*cubes)[i], 0.02+(b/100));
     }
+    for (unsigned int i = 0; i < pyramids->size(); i++) {
+        DrawPyramid((*pyramids)[i]);
+        RotatePyramid((*pyramids)[i]);
+    }
     glFlush();
 }
 
@@ -211,6 +248,13 @@ int main(int argc, char** argv) {
     cub4.t3 = glm::vec3(1, 3, 0);
     cub4.t4 = glm::vec3(1, 3, 1);
     cubes->insert(cubes->begin(), cub4);
+    pyramid pyramid1 = *new pyramid();
+    pyramid1.b1 = glm::vec3(5, 0, 0);
+    pyramid1.b2 = glm::vec3(5, 0, 1);
+    pyramid1.b3 = glm::vec3(6, 0, 0);
+    pyramid1.b4 = glm::vec3(6, 0, 1);
+    pyramid1.t = glm::vec3(5.5, 1, 0.5);
+    pyramids->insert(pyramids->begin(), pyramid1);
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     //glutInitWindowPosition(0, 0);
