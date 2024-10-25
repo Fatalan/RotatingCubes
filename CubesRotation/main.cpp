@@ -170,9 +170,10 @@ int main(int argc, char** argv) {
     cubes->insert(cubes->begin(), cub3);
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowPosition(0, 0);
-    glutInitWindowSize(400, 300);
+    //glutInitWindowPosition(0, 0);
+    //glutInitWindowSize(600, 600);
     glutCreateWindow("Cubes rotation");
+    glutFullScreen();
     glutDisplayFunc(display);
     Loop(1);
     glutMainLoop();
