@@ -61,6 +61,26 @@ void RotateCube(cube& cub) {
     cub.t2 = glm::vec3(rotationMatrix * glm::vec4(cub.t2, 1.0));
     cub.t3 = glm::vec3(rotationMatrix * glm::vec4(cub.t3, 1.0));
     cub.t4 = glm::vec3(rotationMatrix * glm::vec4(cub.t4, 1.0));
+    rotationMatrix = glm::mat4(1);
+    rotationMatrix = glm::rotate(rotationMatrix, 0.02f, glm::vec3(1, 0, 0));
+    cub.b1 = glm::vec3(rotationMatrix * glm::vec4(cub.b1, 1.0));
+    cub.b2 = glm::vec3(rotationMatrix * glm::vec4(cub.b2, 1.0));
+    cub.b3 = glm::vec3(rotationMatrix * glm::vec4(cub.b3, 1.0));
+    cub.b4 = glm::vec3(rotationMatrix * glm::vec4(cub.b4, 1.0));
+    cub.t1 = glm::vec3(rotationMatrix * glm::vec4(cub.t1, 1.0));
+    cub.t2 = glm::vec3(rotationMatrix * glm::vec4(cub.t2, 1.0));
+    cub.t3 = glm::vec3(rotationMatrix * glm::vec4(cub.t3, 1.0));
+    cub.t4 = glm::vec3(rotationMatrix * glm::vec4(cub.t4, 1.0));
+    rotationMatrix = glm::mat4(1);
+    rotationMatrix = glm::rotate(rotationMatrix, 0.02f, glm::vec3(0, 0, 1));
+    cub.b1 = glm::vec3(rotationMatrix * glm::vec4(cub.b1, 1.0));
+    cub.b2 = glm::vec3(rotationMatrix * glm::vec4(cub.b2, 1.0));
+    cub.b3 = glm::vec3(rotationMatrix * glm::vec4(cub.b3, 1.0));
+    cub.b4 = glm::vec3(rotationMatrix * glm::vec4(cub.b4, 1.0));
+    cub.t1 = glm::vec3(rotationMatrix * glm::vec4(cub.t1, 1.0));
+    cub.t2 = glm::vec3(rotationMatrix * glm::vec4(cub.t2, 1.0));
+    cub.t3 = glm::vec3(rotationMatrix * glm::vec4(cub.t3, 1.0));
+    cub.t4 = glm::vec3(rotationMatrix * glm::vec4(cub.t4, 1.0));
 }
 
 void MoveCube(cube& cub) {
@@ -98,7 +118,7 @@ void display() {
     // Set up modelview
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(10, 5, 5,   // Camera position
+    gluLookAt(10, -5, 5,   // Camera position
         0, 0.5, 0.5, // Look at point
         0.0, 1.0, 0.0); // Up vector
     glEnable(GL_DEPTH_TEST);
