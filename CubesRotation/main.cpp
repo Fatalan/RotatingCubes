@@ -52,7 +52,7 @@ void DrawCube(cube cub) {
 
 void RotateCube(cube& cub) {
     glm::mat4 rotationMatrix(1);
-    rotationMatrix = glm::rotate(rotationMatrix, 0.32f, glm::vec3(0, 1, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, 0.02f, glm::vec3(0, 1, 0));
     cub.b1 = glm::vec3(rotationMatrix * glm::vec4(cub.b1, 1.0));
     cub.b2 = glm::vec3(rotationMatrix * glm::vec4(cub.b2, 1.0));
     cub.b3 = glm::vec3(rotationMatrix * glm::vec4(cub.b3, 1.0));
@@ -90,14 +90,22 @@ void MoveCube(cube& cub) {
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Set up perspective projection
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluLookAt(0, 0, 0, 0.5, 0.5, 0.5, 0.0, 1.0, 0.0);
-    //gluPerspective(1.14, float(GLUT_WINDOW_WIDTH / GLUT_WINDOW_HEIGHT), float(GLUT_WINDOW_HEIGHT / 2) / tan(1.14 / 2.0) / 10, float(GLUT_WINDOW_HEIGHT / 2) / tan(1.14 / 2.0) * 10);
+    gluPerspective(45.0f, 1.0f, 0.1f, 100.0f); // Adjust near and far planes
+
+    // Set up modelview
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(10, 5, 5,   // Camera position
+        0, 0.5, 0.5, // Look at point
+        0.0, 1.0, 0.0); // Up vector
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     for (unsigned int i = 0; i < cubes->size(); i++) {
         DrawCube((*cubes)[i]);
-        MoveCube((*cubes)[i]);
+        //MoveCube((*cubes)[i]);
         RotateCube((*cubes)[i]);
     }
     glFlush();
