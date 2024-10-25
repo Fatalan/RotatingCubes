@@ -30,23 +30,23 @@ void DrawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
 
 void DrawCube(cube cub) {
     //Нижняя грань:
-    DrawTriangle(cub.b1, cub.b2, cub.b3);
-    DrawTriangle(cub.b2, cub.b3, cub.b4);
+    DrawTriangle(cub.b2, cub.b1, cub.b3);
+    DrawTriangle(cub.b2, cub.b4, cub.b3);
     //Верхняя грань:
-    DrawTriangle(cub.t1, cub.t2, cub.t3);
-    DrawTriangle(cub.t2, cub.t3, cub.t4);
+    DrawTriangle(cub.t2, cub.t1, cub.t3);
+    DrawTriangle(cub.t2, cub.t4, cub.t3);
     //Боковая грань(дальняя правая):
-    DrawTriangle(cub.b1, cub.b2, cub.t1);
-    DrawTriangle(cub.b2, cub.t1, cub.t2);
+    DrawTriangle(cub.b2, cub.b1, cub.t1);
+    DrawTriangle(cub.b2, cub.t2, cub.t1);
     //Боковая грань(ближняя правая):
-    DrawTriangle(cub.b2, cub.b4, cub.t2);
-    DrawTriangle(cub.b4, cub.t2, cub.t4);
+    DrawTriangle(cub.b4, cub.b2, cub.t2);
+    DrawTriangle(cub.b4, cub.t4, cub.t2);
     //Боковая грань(дальняя левая):
-    DrawTriangle(cub.b1, cub.b3, cub.t1);
-    DrawTriangle(cub.b3, cub.t1, cub.t3);
+    DrawTriangle(cub.b3, cub.b1, cub.t1);
+    DrawTriangle(cub.b3, cub.t3, cub.t1);
     //Боковая грань(ближняя левая):
-    DrawTriangle(cub.b3, cub.b4, cub.t3);
-    DrawTriangle(cub.b4, cub.t3, cub.t4);
+    DrawTriangle(cub.b4, cub.b3, cub.t3);
+    DrawTriangle(cub.b4, cub.t4, cub.t3);
 }
 
 void MoveCube(cube& cub) {
@@ -91,7 +91,7 @@ void display() {
 void Loop(int i)
 {
     glutPostRedisplay();
-    glutTimerFunc(5000 / 60, Loop, 0);
+    glutTimerFunc(1000 / 60, Loop, 0);
 }
 
 int main(int argc, char** argv) {
