@@ -50,9 +50,9 @@ void DrawCube(cube cub) {
     DrawTriangle(cub.b4, cub.t4, cub.t3);
 }
 
-void RotateCube(cube& cub) {
+void RotateCube(cube& cub, float angle) {
     glm::mat4 rotationMatrix(1);
-    rotationMatrix = glm::rotate(rotationMatrix, 0.02f, glm::vec3(0, 1, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, angle, glm::vec3(0, 1, 0));
     cub.b1 = glm::vec3(rotationMatrix * glm::vec4(cub.b1, 1.0));
     cub.b2 = glm::vec3(rotationMatrix * glm::vec4(cub.b2, 1.0));
     cub.b3 = glm::vec3(rotationMatrix * glm::vec4(cub.b3, 1.0));
@@ -62,7 +62,7 @@ void RotateCube(cube& cub) {
     cub.t3 = glm::vec3(rotationMatrix * glm::vec4(cub.t3, 1.0));
     cub.t4 = glm::vec3(rotationMatrix * glm::vec4(cub.t4, 1.0));
     rotationMatrix = glm::mat4(1);
-    rotationMatrix = glm::rotate(rotationMatrix, 0.02f, glm::vec3(1, 0, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, angle, glm::vec3(1, 0, 0));
     cub.b1 = glm::vec3(rotationMatrix * glm::vec4(cub.b1, 1.0));
     cub.b2 = glm::vec3(rotationMatrix * glm::vec4(cub.b2, 1.0));
     cub.b3 = glm::vec3(rotationMatrix * glm::vec4(cub.b3, 1.0));
@@ -72,7 +72,7 @@ void RotateCube(cube& cub) {
     cub.t3 = glm::vec3(rotationMatrix * glm::vec4(cub.t3, 1.0));
     cub.t4 = glm::vec3(rotationMatrix * glm::vec4(cub.t4, 1.0));
     rotationMatrix = glm::mat4(1);
-    rotationMatrix = glm::rotate(rotationMatrix, 0.02f, glm::vec3(0, 0, 1));
+    rotationMatrix = glm::rotate(rotationMatrix, angle, glm::vec3(0, 0, 1));
     cub.b1 = glm::vec3(rotationMatrix * glm::vec4(cub.b1, 1.0));
     cub.b2 = glm::vec3(rotationMatrix * glm::vec4(cub.b2, 1.0));
     cub.b3 = glm::vec3(rotationMatrix * glm::vec4(cub.b3, 1.0));
@@ -124,9 +124,10 @@ void display() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     for (unsigned int i = 0; i < cubes->size(); i++) {
+        float b = i;
         DrawCube((*cubes)[i]);
         //MoveCube((*cubes)[i]);
-        RotateCube((*cubes)[i]);
+        RotateCube((*cubes)[i], 0.02+(b/100));
     }
     glFlush();
 }
@@ -162,25 +163,35 @@ int main(int argc, char** argv) {
     cub.t4 = glm::vec3(1, 1, 1);
     cubes->insert(cubes->begin(), cub);
     cube cub2 = *new cube();
-    cub2.b1 = glm::vec3(1, 0, 1);
-    cub2.b2 = glm::vec3(1, 0, 2);
-    cub2.b3 = glm::vec3(2, 0, 1);
-    cub2.b4 = glm::vec3(2, 0, 2);
-    cub2.t1 = glm::vec3(1, 1, 1);
-    cub2.t2 = glm::vec3(1, 1, 2);
-    cub2.t3 = glm::vec3(2, 1, 1);
-    cub2.t4 = glm::vec3(2, 1, 2);
+    cub2.b1 = glm::vec3(2, 0, 2);
+    cub2.b2 = glm::vec3(2, 0, 3);
+    cub2.b3 = glm::vec3(3, 0, 2);
+    cub2.b4 = glm::vec3(3, 0, 3);
+    cub2.t1 = glm::vec3(2, 1, 2);
+    cub2.t2 = glm::vec3(2, 1, 3);
+    cub2.t3 = glm::vec3(3, 1, 2);
+    cub2.t4 = glm::vec3(3, 1, 3);
     cubes->insert(cubes->begin(), cub2);
     cube cub3 = *new cube();
-    cub3.b1 = glm::vec3(-1, 0, -1);
-    cub3.b2 = glm::vec3(-1, 0, 0);
-    cub3.b3 = glm::vec3(0, 0, -1);
-    cub3.b4 = glm::vec3(0, 0, 0);
-    cub3.t1 = glm::vec3(-1, 1, -1);
-    cub3.t2 = glm::vec3(-1, 1, 0);
-    cub3.t3 = glm::vec3(0, 1, -1);
-    cub3.t4 = glm::vec3(0, 1, 0);
+    cub3.b1 = glm::vec3(-2, 0, -2);
+    cub3.b2 = glm::vec3(-2, 0, -1);
+    cub3.b3 = glm::vec3(-1, 0, -2);
+    cub3.b4 = glm::vec3(-1, 0, -1);
+    cub3.t1 = glm::vec3(-2, 1, -2);
+    cub3.t2 = glm::vec3(-2, 1, -1);
+    cub3.t3 = glm::vec3(-1, 1, -2);
+    cub3.t4 = glm::vec3(-1, 1, -1);
     cubes->insert(cubes->begin(), cub3);
+    cube cub4 = *new cube();
+    cub4.b1 = glm::vec3(0, 2, 0);
+    cub4.b2 = glm::vec3(0, 2, 1);
+    cub4.b3 = glm::vec3(1, 2, 0);
+    cub4.b4 = glm::vec3(1, 2, 1);
+    cub4.t1 = glm::vec3(0, 3, 0);
+    cub4.t2 = glm::vec3(0, 3, 1);
+    cub4.t3 = glm::vec3(1, 3, 0);
+    cub4.t4 = glm::vec3(1, 3, 1);
+    cubes->insert(cubes->begin(), cub4);
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     //glutInitWindowPosition(0, 0);
