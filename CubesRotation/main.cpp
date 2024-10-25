@@ -2,6 +2,7 @@
 #include <vector>
 #include <GL/glut.h>
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 #include <random>
 #include <set>
 #include <unordered_set>
@@ -49,6 +50,19 @@ void DrawCube(cube cub) {
     DrawTriangle(cub.b4, cub.t4, cub.t3);
 }
 
+void RotateCube(cube& cub) {
+    glm::mat4 rotationMatrix(1);
+    rotationMatrix = glm::rotate(rotationMatrix, 0.32f, glm::vec3(0, 1, 0));
+    cub.b1 = glm::vec3(rotationMatrix * glm::vec4(cub.b1, 1.0));
+    cub.b2 = glm::vec3(rotationMatrix * glm::vec4(cub.b2, 1.0));
+    cub.b3 = glm::vec3(rotationMatrix * glm::vec4(cub.b3, 1.0));
+    cub.b4 = glm::vec3(rotationMatrix * glm::vec4(cub.b4, 1.0));
+    cub.t1 = glm::vec3(rotationMatrix * glm::vec4(cub.t1, 1.0));
+    cub.t2 = glm::vec3(rotationMatrix * glm::vec4(cub.t2, 1.0));
+    cub.t3 = glm::vec3(rotationMatrix * glm::vec4(cub.t3, 1.0));
+    cub.t4 = glm::vec3(rotationMatrix * glm::vec4(cub.t4, 1.0));
+}
+
 void MoveCube(cube& cub) {
     if (cub.b1.x > 1) {
         step = -0.1;
@@ -84,6 +98,7 @@ void display() {
     for (unsigned int i = 0; i < cubes->size(); i++) {
         DrawCube((*cubes)[i]);
         MoveCube((*cubes)[i]);
+        RotateCube((*cubes)[i]);
     }
     glFlush();
 }
