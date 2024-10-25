@@ -7,6 +7,9 @@
 #include <set>
 #include <unordered_set>
 
+#define HI 30
+#define LO -30
+
 struct cube {
     glm::vec3 b1;
     glm::vec3 b2;
@@ -20,12 +23,18 @@ struct cube {
 
 std::vector<cube>* cubes = new std::vector<cube>();
 float step = 0.01;
+float BackGroundR = 0;
+float BackGroundB = 0;
+float BackGroundG = 0;
+float EyeX = 10;
+float EyeY = -5;
+float EyeZ = 5;
 
 void DrawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
     glBegin(GL_POLYGON);
-    glColor3f(1, 0, 0); glVertex3f(p1.x, p1.y, p1.z);
-    glColor3f(0, 1, 0); glVertex3f(p2.x, p2.y, p2.z);
-    glColor3f(0, 0, 1); glVertex3f(p3.x, p3.y, p3.z);
+    glColor3f(0, 0.6, 0.5); glVertex3f(p1.x, p1.y, p1.z);
+    glColor3f(0, 0.4, 0.6); glVertex3f(p2.x, p2.y, p2.z);
+    glColor3f(0, 0.5, 0.5); glVertex3f(p3.x, p3.y, p3.z);
     glEnd();
 }
 
@@ -110,6 +119,7 @@ void MoveCube(cube& cub) {
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(BackGroundR, BackGroundB, BackGroundG, 1);
     // Set up perspective projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -118,7 +128,7 @@ void display() {
     // Set up modelview
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(10, -5, 5,   // Camera position
+    gluLookAt(EyeX, EyeY, EyeZ,   // Camera position
         0, 0.5, 0.5, // Look at point
         0.0, 1.0, 0.0); // Up vector
     glEnable(GL_DEPTH_TEST);
@@ -144,6 +154,15 @@ void keyboard(unsigned char key, int x, int y)
         case 27:
             exit(0);
             break;
+        case 'c':
+            BackGroundR = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+            BackGroundG = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+            BackGroundB = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+            break;
+        case 'f':
+            EyeX = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
+            EyeY = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
+            EyeZ = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
         default:
             break;
     }
