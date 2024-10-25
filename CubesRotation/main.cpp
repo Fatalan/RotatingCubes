@@ -137,6 +137,19 @@ void Loop(int i)
     glutTimerFunc(1000 / 60, Loop, 0);
 }
 
+void keyboard(unsigned char key, int x, int y)
+{
+    switch (key) {
+        case 27:
+            exit(0);
+            break;
+        default:
+            break;
+    }
+
+}
+
+
 int main(int argc, char** argv) {
     cube cub = *new cube();
     cub.b1 = glm::vec3(0, 0, 0);
@@ -173,6 +186,7 @@ int main(int argc, char** argv) {
     //glutInitWindowPosition(0, 0);
     //glutInitWindowSize(600, 600);
     glutCreateWindow("Cubes rotation");
+    glutKeyboardFunc(keyboard);
     glutFullScreen();
     glutDisplayFunc(display);
     Loop(1);
