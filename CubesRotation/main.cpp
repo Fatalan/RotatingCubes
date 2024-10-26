@@ -200,6 +200,25 @@ void keyboard(unsigned char key, int x, int y)
             EyeX = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
             EyeY = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
             EyeZ = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
+            break;
+        case 'w':
+            EyeX += 0.1;
+            break;
+        case 's':
+            EyeX -= 0.1;
+            break;
+        case 'a':
+            EyeZ -= 0.1;
+            break;
+        case 'd':
+            EyeZ += 0.1;
+            break;
+        case 'z':
+            EyeY += 0.1;
+            break;
+        case 'x':
+            EyeY -= 0.1;
+            break;
         default:
             break;
     }
