@@ -10,36 +10,7 @@
 #define HI 30
 #define LO -30
 
-struct cube {
-    glm::vec3 b1;
-    glm::vec3 b2;
-    glm::vec3 b3;
-    glm::vec3 b4;
-    glm::vec3 t1;
-    glm::vec3 t2;
-    glm::vec3 t3;
-    glm::vec3 t4;
-};
-
-struct pyramid {
-    glm::vec3 t;
-    glm::vec3 b1;
-    glm::vec3 b2;
-    glm::vec3 b3;
-    glm::vec3 b4;
-};
-
-std::vector<cube>* cubes = new std::vector<cube>();
-std::vector<pyramid>* pyramids = new std::vector<pyramid>();
-float step = 0.01;
-float BackGroundR = 0;
-float BackGroundB = 0;
-float BackGroundG = 0;
-float EyeX = 10;
-float EyeY = -5;
-float EyeZ = 5;
-
-void DrawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
+static void DrawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
     glBegin(GL_POLYGON);
     //glColor3f(0, 0.6, 0.5); glVertex3f(p1.x, p1.y, p1.z);
     //glColor3f(0, 0.4, 0.6); glVertex3f(p2.x, p2.y, p2.z);
@@ -50,105 +21,119 @@ void DrawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
     glEnd();
 }
 
-void DrawCube(cube cub) {
-    //Нижняя грань:
-    DrawTriangle(cub.b2, cub.b1, cub.b3);
-    DrawTriangle(cub.b2, cub.b4, cub.b3);
-    //Верхняя грань:
-    DrawTriangle(cub.t2, cub.t1, cub.t3);
-    DrawTriangle(cub.t2, cub.t4, cub.t3);
-    //Боковая грань(дальняя правая):
-    DrawTriangle(cub.b2, cub.b1, cub.t1);
-    DrawTriangle(cub.b2, cub.t2, cub.t1);
-    //Боковая грань(ближняя правая):
-    DrawTriangle(cub.b4, cub.b2, cub.t2);
-    DrawTriangle(cub.b4, cub.t4, cub.t2);
-    //Боковая грань(дальняя левая):
-    DrawTriangle(cub.b3, cub.b1, cub.t1);
-    DrawTriangle(cub.b3, cub.t3, cub.t1);
-    //Боковая грань(ближняя левая):
-    DrawTriangle(cub.b4, cub.b3, cub.t3);
-    DrawTriangle(cub.b4, cub.t4, cub.t3);
-}
+class Figure {
+protected:
+    int step = 0.1;
+    std::vector<glm::vec3> points;
+public:
+    Figure() {
 
-void DrawPyramid(pyramid pyr) {
-    DrawTriangle(pyr.t, pyr.b2, pyr.b1);
-    DrawTriangle(pyr.t, pyr.b3, pyr.b1);
-    DrawTriangle(pyr.t, pyr.b4, pyr.b3);
-    DrawTriangle(pyr.t, pyr.b4, pyr.b2);
-    DrawTriangle(pyr.b1, pyr.b3, pyr.b4);
-    DrawTriangle(pyr.b1, pyr.b2, pyr.b4);
-}
-
-void RotatePyramid(pyramid& pyr) {
-    glm::mat4 rotationMatrix(1);
-    glm::vec3 centerOfThePyramid = (pyr.b1 + glm::vec3((pyr.b4 - pyr.b1).x / 2, (pyr.b4 - pyr.b1).y / 2, (pyr.b4 - pyr.b1).z / 2));
-    centerOfThePyramid = (centerOfThePyramid + glm::vec3((pyr.t - centerOfThePyramid).x / 2, (pyr.t - centerOfThePyramid).y / 2, (pyr.t - centerOfThePyramid).z / 2));
-    rotationMatrix = glm::rotate(rotationMatrix, 0.02f, centerOfThePyramid);
-    pyr.b1 = glm::vec3(rotationMatrix * glm::vec4(pyr.b1, 1.0));
-    pyr.b2 = glm::vec3(rotationMatrix * glm::vec4(pyr.b2, 1.0));
-    pyr.b3 = glm::vec3(rotationMatrix * glm::vec4(pyr.b3, 1.0));
-    pyr.b4 = glm::vec3(rotationMatrix * glm::vec4(pyr.b4, 1.0));
-    pyr.t = glm::vec3(rotationMatrix * glm::vec4(pyr.t, 1.0));
-}
-
-void RotateCube(cube& cub, float angle) {
-    glm::mat4 rotationMatrix(1);
-    rotationMatrix = glm::rotate(rotationMatrix, angle, glm::vec3(0, 1, 0));
-    cub.b1 = glm::vec3(rotationMatrix * glm::vec4(cub.b1, 1.0));
-    cub.b2 = glm::vec3(rotationMatrix * glm::vec4(cub.b2, 1.0));
-    cub.b3 = glm::vec3(rotationMatrix * glm::vec4(cub.b3, 1.0));
-    cub.b4 = glm::vec3(rotationMatrix * glm::vec4(cub.b4, 1.0));
-    cub.t1 = glm::vec3(rotationMatrix * glm::vec4(cub.t1, 1.0));
-    cub.t2 = glm::vec3(rotationMatrix * glm::vec4(cub.t2, 1.0));
-    cub.t3 = glm::vec3(rotationMatrix * glm::vec4(cub.t3, 1.0));
-    cub.t4 = glm::vec3(rotationMatrix * glm::vec4(cub.t4, 1.0));
-    rotationMatrix = glm::mat4(1);
-    rotationMatrix = glm::rotate(rotationMatrix, angle, glm::vec3(1, 0, 0));
-    cub.b1 = glm::vec3(rotationMatrix * glm::vec4(cub.b1, 1.0));
-    cub.b2 = glm::vec3(rotationMatrix * glm::vec4(cub.b2, 1.0));
-    cub.b3 = glm::vec3(rotationMatrix * glm::vec4(cub.b3, 1.0));
-    cub.b4 = glm::vec3(rotationMatrix * glm::vec4(cub.b4, 1.0));
-    cub.t1 = glm::vec3(rotationMatrix * glm::vec4(cub.t1, 1.0));
-    cub.t2 = glm::vec3(rotationMatrix * glm::vec4(cub.t2, 1.0));
-    cub.t3 = glm::vec3(rotationMatrix * glm::vec4(cub.t3, 1.0));
-    cub.t4 = glm::vec3(rotationMatrix * glm::vec4(cub.t4, 1.0));
-    rotationMatrix = glm::mat4(1);
-    rotationMatrix = glm::rotate(rotationMatrix, angle, glm::vec3(0, 0, 1));
-    cub.b1 = glm::vec3(rotationMatrix * glm::vec4(cub.b1, 1.0));
-    cub.b2 = glm::vec3(rotationMatrix * glm::vec4(cub.b2, 1.0));
-    cub.b3 = glm::vec3(rotationMatrix * glm::vec4(cub.b3, 1.0));
-    cub.b4 = glm::vec3(rotationMatrix * glm::vec4(cub.b4, 1.0));
-    cub.t1 = glm::vec3(rotationMatrix * glm::vec4(cub.t1, 1.0));
-    cub.t2 = glm::vec3(rotationMatrix * glm::vec4(cub.t2, 1.0));
-    cub.t3 = glm::vec3(rotationMatrix * glm::vec4(cub.t3, 1.0));
-    cub.t4 = glm::vec3(rotationMatrix * glm::vec4(cub.t4, 1.0));
-}
-
-void MoveCube(cube& cub) {
-    if (cub.b1.x > 1) {
-        step = -0.1;
     }
-    else if(cub.b1.x < -1) {
-        step = 0.1;
+    virtual void Draw() = 0;
+    void Move() {
+        if (points[0].x > 1) {
+            step = -0.1;
+        }
+        else if (points[0].x < -1) {
+            step = 0.1;
+        }
+        for (unsigned int i = 0; i < points.size(); i++) {
+            points[i].x += step;
+            points[i].y += step;
+        }
     }
-    cub.b1.x += step;
-    cub.b1.y += step;
-    cub.b2.x += step;
-    cub.b2.y += step;
-    cub.b3.x += step;
-    cub.b3.y += step;
-    cub.b4.x += step;
-    cub.b4.y += step;
-    cub.t1.x += step;
-    cub.t1.y += step;
-    cub.t2.x += step;
-    cub.t2.y += step;
-    cub.t3.x += step;
-    cub.t3.y += step;
-    cub.t4.x += step;
-    cub.t4.y += step;
-}
+    virtual void Rotate(float angle) = 0;
+};
+
+class Cube : Figure {
+public:
+    Cube(glm::vec3 b1, glm::vec3 b2, glm::vec3 b3, glm::vec3 b4, glm::vec3 t1, glm::vec3 t2, glm::vec3 t3, glm::vec3 t4) {
+        points.insert(points.end(), b1);
+        points.insert(points.end(), b2);
+        points.insert(points.end(), b3);
+        points.insert(points.end(), b4);
+        points.insert(points.end(), t1);
+        points.insert(points.end(), t2);
+        points.insert(points.end(), t3);
+        points.insert(points.end(), t4);
+    }
+    void Draw() {
+        //Нижняя грань:
+        DrawTriangle(points[1], points[0], points[2]);
+        DrawTriangle(points[1], points[3], points[2]);
+        //Верхняя грань:
+        DrawTriangle(points[5], points[4], points[6]);
+        DrawTriangle(points[5], points[7], points[6]);
+        //Боковая грань(дальняя правая):
+        DrawTriangle(points[1], points[0], points[4]);
+        DrawTriangle(points[1], points[5], points[4]);
+        //Боковая грань(ближняя правая):
+        DrawTriangle(points[3], points[1], points[5]);
+        DrawTriangle(points[3], points[7], points[5]);
+        //Боковая грань(дальняя левая):
+        DrawTriangle(points[2], points[0], points[4]);
+        DrawTriangle(points[2], points[6], points[4]);
+        //Боковая грань(ближняя левая):
+        DrawTriangle(points[3], points[2], points[6]);
+        DrawTriangle(points[3], points[7], points[6]);
+    }
+    void Rotate(float angle) {
+        glm::mat4 rotationMatrix(1);
+        rotationMatrix = glm::rotate(rotationMatrix, angle, glm::vec3(0, 1, 0));
+        for (unsigned int i = 0; i < points.size(); i++) {
+            points[i] = glm::vec3(rotationMatrix * glm::vec4(points[i], 1.0));
+        }
+        rotationMatrix = glm::mat4(1);
+        rotationMatrix = glm::rotate(rotationMatrix, angle, glm::vec3(1, 0, 0));
+        for (unsigned int i = 0; i < points.size(); i++) {
+            points[i] = glm::vec3(rotationMatrix * glm::vec4(points[i], 1.0));
+        }
+        rotationMatrix = glm::mat4(1);
+        rotationMatrix = glm::rotate(rotationMatrix, angle, glm::vec3(0, 0, 1));
+        for (unsigned int i = 0; i < points.size(); i++) {
+            points[i] = glm::vec3(rotationMatrix * glm::vec4(points[i], 1.0));
+        }
+    }
+};
+
+class Pyramid : Figure {
+public:
+    Pyramid(glm::vec3 b1, glm::vec3 b2, glm::vec3 b3, glm::vec3 b4, glm::vec3 t) {
+        points.insert(points.end(), b1);
+        points.insert(points.end(), b2);
+        points.insert(points.end(), b3);
+        points.insert(points.end(), b4);
+        points.insert(points.end(), t);
+    }
+    void Draw() {
+        DrawTriangle(points[4], points[1], points[0]);
+        DrawTriangle(points[4], points[2], points[0]);
+        DrawTriangle(points[4], points[3], points[2]);
+        DrawTriangle(points[4], points[3], points[1]);
+        DrawTriangle(points[0], points[2], points[3]);
+        DrawTriangle(points[0], points[1], points[3]);
+    }
+    void Move() {
+        return;
+    }
+    void Rotate(float angle = 0) {
+        glm::mat4 rotationMatrix(1);
+        glm::vec3 centerOfThePyramid = (points[0] + glm::vec3((points[3] - points[0]).x / 2, (points[3] - points[0]).y / 2, (points[3] - points[0]).z / 2));
+        centerOfThePyramid = (centerOfThePyramid + glm::vec3((points[4] - centerOfThePyramid).x / 2, (points[4] - centerOfThePyramid).y / 2, (points[4] - centerOfThePyramid).z / 2));
+        rotationMatrix = glm::rotate(rotationMatrix, 0.02f, centerOfThePyramid);
+        for (unsigned int i = 0; i < points.size(); i++) {
+            points[i] = glm::vec3(rotationMatrix * glm::vec4(points[i], 1.0));
+        }
+    }
+};
+
+std::vector<Figure*>* figures = new std::vector<Figure*>();
+float BackGroundR = 0;
+float BackGroundB = 0;
+float BackGroundG = 0;
+float EyeX = 10;
+float EyeY = -5;
+float EyeZ = 5;
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -166,15 +151,10 @@ void display() {
         0.0, 1.0, 0.0); // Up vector
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-    for (unsigned int i = 0; i < cubes->size(); i++) {
+    for (unsigned int i = 0; i < figures->size(); i++) {
         float b = i;
-        DrawCube((*cubes)[i]);
-        //MoveCube((*cubes)[i]);
-        RotateCube((*cubes)[i], 0.02+(b/100));
-    }
-    for (unsigned int i = 0; i < pyramids->size(); i++) {
-        DrawPyramid((*pyramids)[i]);
-        RotatePyramid((*pyramids)[i]);
+        (*figures)[i][0].Draw();
+        (*figures)[i][0].Rotate(0.02 + (b / 100));
     }
     glFlush();
 }
@@ -227,53 +207,58 @@ void keyboard(unsigned char key, int x, int y)
 
 
 int main(int argc, char** argv) {
-    cube cub = *new cube();
-    cub.b1 = glm::vec3(0, 0, 0);
-    cub.b2 = glm::vec3(0, 0, 1);
-    cub.b3 = glm::vec3(1, 0, 0);
-    cub.b4 = glm::vec3(1, 0, 1);
-    cub.t1 = glm::vec3(0, 1, 0);
-    cub.t2 = glm::vec3(0, 1, 1);
-    cub.t3 = glm::vec3(1, 1, 0);
-    cub.t4 = glm::vec3(1, 1, 1);
-    cubes->insert(cubes->begin(), cub);
-    cube cub2 = *new cube();
-    cub2.b1 = glm::vec3(2, 0, 2);
-    cub2.b2 = glm::vec3(2, 0, 3);
-    cub2.b3 = glm::vec3(3, 0, 2);
-    cub2.b4 = glm::vec3(3, 0, 3);
-    cub2.t1 = glm::vec3(2, 1, 2);
-    cub2.t2 = glm::vec3(2, 1, 3);
-    cub2.t3 = glm::vec3(3, 1, 2);
-    cub2.t4 = glm::vec3(3, 1, 3);
-    cubes->insert(cubes->begin(), cub2);
-    cube cub3 = *new cube();
-    cub3.b1 = glm::vec3(-2, 0, -2);
-    cub3.b2 = glm::vec3(-2, 0, -1);
-    cub3.b3 = glm::vec3(-1, 0, -2);
-    cub3.b4 = glm::vec3(-1, 0, -1);
-    cub3.t1 = glm::vec3(-2, 1, -2);
-    cub3.t2 = glm::vec3(-2, 1, -1);
-    cub3.t3 = glm::vec3(-1, 1, -2);
-    cub3.t4 = glm::vec3(-1, 1, -1);
-    cubes->insert(cubes->begin(), cub3);
-    cube cub4 = *new cube();
-    cub4.b1 = glm::vec3(0, 2, 0);
-    cub4.b2 = glm::vec3(0, 2, 1);
-    cub4.b3 = glm::vec3(1, 2, 0);
-    cub4.b4 = glm::vec3(1, 2, 1);
-    cub4.t1 = glm::vec3(0, 3, 0);
-    cub4.t2 = glm::vec3(0, 3, 1);
-    cub4.t3 = glm::vec3(1, 3, 0);
-    cub4.t4 = glm::vec3(1, 3, 1);
-    cubes->insert(cubes->begin(), cub4);
-    pyramid pyramid1 = *new pyramid();
-    pyramid1.b1 = glm::vec3(5, 0, 0);
-    pyramid1.b2 = glm::vec3(5, 0, 1);
-    pyramid1.b3 = glm::vec3(6, 0, 0);
-    pyramid1.b4 = glm::vec3(6, 0, 1);
-    pyramid1.t = glm::vec3(5.5, 1, 0.5);
-    pyramids->insert(pyramids->begin(), pyramid1);
+    Cube* cub = new Cube(
+        glm::vec3(0, 0, 0),
+        glm::vec3(0, 0, 1),
+        glm::vec3(1, 0, 0),
+        glm::vec3(1, 0, 1),
+        glm::vec3(0, 1, 0),
+        glm::vec3(0, 1, 1),
+        glm::vec3(1, 1, 0),
+        glm::vec3(1, 1, 1)
+    );
+    figures->insert(figures->begin(), (Figure*)cub);
+    Cube* cub2 = new Cube(
+        glm::vec3(2, 0, 2),
+        glm::vec3(2, 0, 3),
+        glm::vec3(3, 0, 2),
+        glm::vec3(3, 0, 3),
+        glm::vec3(2, 1, 2),
+        glm::vec3(2, 1, 3),
+        glm::vec3(3, 1, 2),
+        glm::vec3(3, 1, 3)
+    );
+    figures->insert(figures->begin(), (Figure*)cub2);
+    Cube* cub3 = new Cube(
+        glm::vec3(-2, 0, -2),
+        glm::vec3(-2, 0, -1),
+        glm::vec3(-1, 0, -2),
+        glm::vec3(-1, 0, -1),
+        glm::vec3(-2, 1, -2),
+        glm::vec3(-2, 1, -1),
+        glm::vec3(-1, 1, -2),
+        glm::vec3(-1, 1, -1)
+    );
+    figures->insert(figures->begin(), (Figure*)cub3);
+    Cube* cub4 = new Cube(
+        glm::vec3(0, 2, 0),
+        glm::vec3(0, 2, 1),
+        glm::vec3(1, 2, 0),
+        glm::vec3(1, 2, 1),
+        glm::vec3(0, 3, 0),
+        glm::vec3(0, 3, 1),
+        glm::vec3(1, 3, 0),
+        glm::vec3(1, 3, 1)
+    );
+    figures->insert(figures->begin(), (Figure*)cub4);
+    Pyramid* pyramid1 = new Pyramid(
+        glm::vec3(5, 0, 0),
+        glm::vec3(5, 0, 1),
+        glm::vec3(6, 0, 0),
+        glm::vec3(6, 0, 1),
+        glm::vec3(5.5, 1, 0.5)
+    );
+    figures->insert(figures->begin(), (Figure*)pyramid1);
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     //glutInitWindowPosition(0, 0);
