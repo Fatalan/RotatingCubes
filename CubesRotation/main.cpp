@@ -57,6 +57,16 @@ public:
         points.insert(points.end(), t3);
         points.insert(points.end(), t4);
     }
+    Cube(glm::vec3 center, float radius) {
+        points.insert(points.end(), glm::vec3(center.x - radius / 2, center.y - radius / 2, center.z - radius / 2));
+        points.insert(points.end(), glm::vec3(center.x - radius / 2, center.y - radius / 2, center.z + radius / 2));
+        points.insert(points.end(), glm::vec3(center.x + radius / 2, center.y - radius / 2, center.z - radius / 2));
+        points.insert(points.end(), glm::vec3(center.x + radius / 2, center.y - radius / 2, center.z + radius / 2));
+        points.insert(points.end(), glm::vec3(center.x - radius / 2, center.y + radius / 2, center.z - radius / 2));
+        points.insert(points.end(), glm::vec3(center.x - radius / 2, center.y + radius / 2, center.z + radius / 2));
+        points.insert(points.end(), glm::vec3(center.x + radius / 2, center.y + radius / 2, center.z - radius / 2));
+        points.insert(points.end(), glm::vec3(center.x + radius / 2, center.y + radius / 2, center.z + radius / 2));
+    }
     void Draw() {
         //Нижняя грань:
         DrawTriangle(points[1], points[0], points[2]);
@@ -134,6 +144,10 @@ float BackGroundG = 0;
 float EyeX = 10;
 float EyeY = -5;
 float EyeZ = 5;
+float lookAtX = 0;
+float lookAtY = 0.5;
+float lookAtZ = 0.5;
+bool DoRotation = true;
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -147,14 +161,15 @@ void display() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(EyeX, EyeY, EyeZ,   // Camera position
-        0, 0.5, 0.5, // Look at point
+        lookAtX, lookAtY, lookAtZ, // Look at point
         0.0, 1.0, 0.0); // Up vector
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     for (unsigned int i = 0; i < figures->size(); i++) {
         float b = i;
         (*figures)[i][0].Draw();
-        (*figures)[i][0].Rotate(0.02 + (b / 100));
+        if(DoRotation)
+            (*figures)[i][0].Rotate(0.02 + (b / 100));
     }
     glFlush();
 }
@@ -180,24 +195,36 @@ void keyboard(unsigned char key, int x, int y)
             EyeX = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
             EyeY = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
             EyeZ = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
+            lookAtX = 0;
+            lookAtY = 0.5;
+            lookAtZ = 0.5;
             break;
         case 'w':
-            EyeX += 0.1;
+            EyeX += 1;
+            lookAtX += 1;
             break;
         case 's':
-            EyeX -= 0.1;
+            EyeX -= 1;
+            lookAtX -= 1;
             break;
         case 'a':
-            EyeZ -= 0.1;
+            EyeZ -= 1;
+            lookAtZ -= 1;
             break;
         case 'd':
-            EyeZ += 0.1;
+            EyeZ += 1;
+            lookAtZ += 1;
             break;
         case 'z':
-            EyeY += 0.1;
+            EyeY += 1;
+            lookAtY += 1;
             break;
         case 'x':
-            EyeY -= 0.1;
+            EyeY -= 1;
+            lookAtY -= 1;
+            break;
+        case 'k':
+            DoRotation = !DoRotation;
             break;
         default:
             break;
@@ -251,6 +278,20 @@ int main(int argc, char** argv) {
         glm::vec3(1, 3, 1)
     );
     figures->insert(figures->begin(), (Figure*)cub4);
+    figures->insert(figures->begin(), 
+        (Figure*)new Cube(
+            glm::vec3(0, -15, 0),
+            glm::vec3(0, -15, 10),
+            glm::vec3(10, -15, 0),
+            glm::vec3(10, -15, 10),
+            glm::vec3(0, -5, 0),
+            glm::vec3(0, -5, 10),
+            glm::vec3(10, -5, 0),
+            glm::vec3(10, -5, 10)
+            )
+        );
+    figures->insert(figures->begin(), (Figure*)new Cube(glm::vec3(6, 6, 6), 0.05));
+    figures->insert(figures->begin(), (Figure*)new Cube(glm::vec3(6, 6, 6), 10));
     Pyramid* pyramid1 = new Pyramid(
         glm::vec3(5, 0, 0),
         glm::vec3(5, 0, 1),
