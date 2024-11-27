@@ -23,7 +23,7 @@ static void DrawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
 
 class Figure {
 protected:
-    int step = 0.1;
+    float step = 0.1;
     std::vector<glm::vec3> points;
 public:
     Figure() {
@@ -31,10 +31,10 @@ public:
     }
     virtual void Draw() = 0;
     void Move() {
-        if (points[0].x > 1) {
+        if (points[0].x > 30) {
             step = -0.1;
         }
-        else if (points[0].x < -1) {
+        else if (points[0].x < -30) {
             step = 0.1;
         }
         for (unsigned int i = 0; i < points.size(); i++) {
@@ -168,6 +168,7 @@ void display() {
     for (unsigned int i = 0; i < figures->size(); i++) {
         float b = i;
         (*figures)[i][0].Draw();
+        (*figures)[i][0].Move();
         if(DoRotation)
             (*figures)[i][0].Rotate(0.02 + (b / 100));
     }
