@@ -57,15 +57,15 @@ public:
         points.insert(points.end(), t3);
         points.insert(points.end(), t4);
     }
-    Cube(glm::vec3 center, float radius) {
-        points.insert(points.end(), glm::vec3(center.x - radius / 2, center.y - radius / 2, center.z - radius / 2));
-        points.insert(points.end(), glm::vec3(center.x - radius / 2, center.y - radius / 2, center.z + radius / 2));
-        points.insert(points.end(), glm::vec3(center.x + radius / 2, center.y - radius / 2, center.z - radius / 2));
-        points.insert(points.end(), glm::vec3(center.x + radius / 2, center.y - radius / 2, center.z + radius / 2));
-        points.insert(points.end(), glm::vec3(center.x - radius / 2, center.y + radius / 2, center.z - radius / 2));
-        points.insert(points.end(), glm::vec3(center.x - radius / 2, center.y + radius / 2, center.z + radius / 2));
-        points.insert(points.end(), glm::vec3(center.x + radius / 2, center.y + radius / 2, center.z - radius / 2));
-        points.insert(points.end(), glm::vec3(center.x + radius / 2, center.y + radius / 2, center.z + radius / 2));
+    Cube(glm::vec3 center, float length) {
+        points.insert(points.end(), glm::vec3(center.x - length / 2, center.y - length / 2, center.z - length / 2));
+        points.insert(points.end(), glm::vec3(center.x - length / 2, center.y - length / 2, center.z + length / 2));
+        points.insert(points.end(), glm::vec3(center.x + length / 2, center.y - length / 2, center.z - length / 2));
+        points.insert(points.end(), glm::vec3(center.x + length / 2, center.y - length / 2, center.z + length / 2));
+        points.insert(points.end(), glm::vec3(center.x - length / 2, center.y + length / 2, center.z - length / 2));
+        points.insert(points.end(), glm::vec3(center.x - length / 2, center.y + length / 2, center.z + length / 2));
+        points.insert(points.end(), glm::vec3(center.x + length / 2, center.y + length / 2, center.z - length / 2));
+        points.insert(points.end(), glm::vec3(center.x + length / 2, center.y + length / 2, center.z + length / 2));
     }
     void Draw() {
         //Нижняя грань:
