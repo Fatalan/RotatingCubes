@@ -123,9 +123,6 @@ public:
         DrawTriangle(points[0], points[2], points[3]);
         DrawTriangle(points[0], points[1], points[3]);
     }
-    void Move() {
-        return;
-    }
     void Rotate(float angle = 0) {
         glm::mat4 rotationMatrix(1);
         glm::vec3 centerOfThePyramid = (points[0] + glm::vec3((points[3] - points[0]).x / 2, (points[3] - points[0]).y / 2, (points[3] - points[0]).z / 2));
