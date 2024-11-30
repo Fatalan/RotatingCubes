@@ -127,9 +127,12 @@ public:
         glm::mat4 rotationMatrix(1);
         glm::vec3 centerOfThePyramid = (points[0] + glm::vec3((points[3] - points[0]).x / 2, (points[3] - points[0]).y / 2, (points[3] - points[0]).z / 2));
         centerOfThePyramid = (centerOfThePyramid + glm::vec3((points[4] - centerOfThePyramid).x / 2, (points[4] - centerOfThePyramid).y / 2, (points[4] - centerOfThePyramid).z / 2));
-        rotationMatrix = glm::rotate(rotationMatrix, 0.02f, centerOfThePyramid);
+        glm::mat4 translationToCenter = glm::translate(glm::mat4(1.0f), -centerOfThePyramid);
+        glm::mat4 translationBack = glm::translate(glm::mat4(1.0f), centerOfThePyramid);
+        rotationMatrix = glm::rotate(rotationMatrix, 0.02f, glm::vec3(0,1,0));
+        glm::mat4 transformationMatrix = translationBack * rotationMatrix * translationToCenter;
         for (unsigned int i = 0; i < points.size(); i++) {
-            points[i] = glm::vec3(rotationMatrix * glm::vec4(points[i], 1.0));
+            points[i] = glm::vec3(transformationMatrix * glm::vec4(points[i], 1.0));
         }
     }
 };
@@ -145,6 +148,7 @@ float lookAtX = 0;
 float lookAtY = 0.5;
 float lookAtZ = 0.5;
 bool DoRotation = true;
+bool DoMoving = true;
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -165,7 +169,8 @@ void display() {
     for (unsigned int i = 0; i < figures->size(); i++) {
         float b = i;
         (*figures)[i][0].Draw();
-        (*figures)[i][0].Move();
+        if(DoMoving)
+            (*figures)[i][0].Move();
         if(DoRotation)
             (*figures)[i][0].Rotate(0.02 + (b / 100));
     }
@@ -223,6 +228,9 @@ void keyboard(unsigned char key, int x, int y)
             break;
         case 'k':
             DoRotation = !DoRotation;
+            break;
+        case 'l':
+            DoMoving = !DoMoving;
             break;
         default:
             break;
