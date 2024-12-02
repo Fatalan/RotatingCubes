@@ -123,13 +123,13 @@ public:
         DrawTriangle(points[0], points[2], points[3]);
         DrawTriangle(points[0], points[1], points[3]);
     }
-    void Rotate(float angle = 0) {
+    void Rotate(float angle) {
         glm::mat4 rotationMatrix(1);
         glm::vec3 centerOfThePyramid = (points[0] + glm::vec3((points[3] - points[0]).x / 2, (points[3] - points[0]).y / 2, (points[3] - points[0]).z / 2));
         centerOfThePyramid = (centerOfThePyramid + glm::vec3((points[4] - centerOfThePyramid).x / 2, (points[4] - centerOfThePyramid).y / 2, (points[4] - centerOfThePyramid).z / 2));
         glm::mat4 translationToCenter = glm::translate(glm::mat4(1.0f), -centerOfThePyramid);
         glm::mat4 translationBack = glm::translate(glm::mat4(1.0f), centerOfThePyramid);
-        rotationMatrix = glm::rotate(rotationMatrix, 0.02f, glm::vec3(0,1,0));
+        rotationMatrix = glm::rotate(rotationMatrix, angle, glm::vec3(0,1,0));
         glm::mat4 transformationMatrix = translationBack * rotationMatrix * translationToCenter;
         for (unsigned int i = 0; i < points.size(); i++) {
             points[i] = glm::vec3(transformationMatrix * glm::vec4(points[i], 1.0));
@@ -308,8 +308,6 @@ int main(int argc, char** argv) {
     figures->insert(figures->begin(), (Figure*)pyramid1);
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    //glutInitWindowPosition(0, 0);
-    //glutInitWindowSize(600, 600);
     glutCreateWindow("Cubes rotation");
     glutKeyboardFunc(keyboard);
     glutFullScreen();
